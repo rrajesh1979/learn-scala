@@ -1,9 +1,11 @@
-package com.learn
-
 object MyListExercise extends App {
   println(EmptyList)
   val list = new IntList(5, EmptyList)
-  println(list)
+  println(list.add(10))
+  val newList = new IntList(1, new IntList(2, new IntList(3, EmptyList)))
+  val anotherList = EmptyList.add(10).add(20).add(30)
+  println("newList :: " + newList)
+  println("anotherList :: " + anotherList)
 }
 
 abstract class MyList {
