@@ -20,9 +20,10 @@ object ScalaBasics extends App {
   println(john.firstName)
   println(john.greeting)
 
-  println(john likes "Harry Potter")
+  println(john likes "Harry Potter") //infix notation
 
-  println(!john)
+  println(!john)  //custom unary operator
 
-  println(john(100))
+  println(john(100)) //apply method
+  //apply method can be used for builder method pattern
 }
