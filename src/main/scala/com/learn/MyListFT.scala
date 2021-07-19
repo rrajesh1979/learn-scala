@@ -13,30 +13,32 @@ object MyListFT extends App {
   println(stringList.add(10))
 
   println(intList ++ anotherIntList)
-  println(intList.flatMap(new Function1[Int, MyListF[Int]] {
-    override def apply(element: Int): MyListF[Int] = new GenericListF(element, new GenericListF(element + 1, EmptyListF))
-  }))
+  println(intList.flatMap(elem => new GenericListF(elem, new GenericListF(elem + 1, EmptyListF))))
 
   //square of number transformer
   print(intList.toString)
   print(" => ")
-  println(intList.map(new Function1[Int, Int] {
-    override def apply(element: Int): Int = element * element
-  }).toString)
+  println(intList.map(elem => elem * elem).toString)
+
+  //double of number transformer
+  print(intList.toString)
+  print(" => ")
+  println(intList.map(elem => elem * 2).toString)
+
+  //double of number transformer
+  print(intList.toString)
+  print(" => ")
+  println(intList.map(_ * 2).toString)
 
   //cube of number transformer
   print(intList.toString)
   print(" => ")
-  println(intList.map(new Function1[Int, Int] {
-    override def apply(element: Int): Int = element * element * element
-  }).toString)
+  println(intList.map(elem => elem * elem * elem).toString)
 
   //filter even numbers
   print(intList.toString)
   print(" => ")
-  println(intList.filter(new Function1[Int, Boolean] {
-    override def apply(element: Int): Boolean = element % 2 == 0
-  }))
+  println(intList.filter(elem => elem % 2 == 0))
 }
 
 abstract class MyListF[+A] {
