@@ -1,4 +1,4 @@
-package com.learn
+package com.learn.other
 
 object AnonymousFunctions extends App {
 

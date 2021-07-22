@@ -1,4 +1,4 @@
-package com.learn
+package com.learn.other
 
 object MyListCV extends App {
   val intList: MyList[Int] = new GenericList(1, new GenericList(2, new GenericList(3, new GenericList(4, EmptyList))))

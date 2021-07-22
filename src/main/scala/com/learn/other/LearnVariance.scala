@@ -1,9 +1,11 @@
-package com.learn
+package com.learn.other
 
 object LearnVariance extends App {
 
   class Animal
+
   class Lion extends Animal
+
   class Fish extends Animal
 
   //Covariance

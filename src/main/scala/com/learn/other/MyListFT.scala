@@ -1,4 +1,4 @@
-package com.learn
+package com.learn.other
 
 object MyListFT extends App {
   val intList: MyListF[Int] = new GenericListF(1, new GenericListF(2, new GenericListF(3, new GenericListF(4, EmptyListF))))
