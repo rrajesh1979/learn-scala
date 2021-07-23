@@ -41,4 +41,7 @@ object MyListTest extends App {
   println(listInt3)
   println(listInt4)
 
+  val listInt5 = listInt4.add("50")
+  println(listInt5)
+
 }
