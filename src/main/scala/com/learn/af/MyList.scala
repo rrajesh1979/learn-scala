@@ -7,9 +7,9 @@ abstract class MyList[+A] {
   def add[B >: A](elem: B): MyList[B]
   def printElements: String
   override def toString: String = "[" + printElements + "]"
-  def map[B](transformer: MyTransformer[A, B]): MyList[B]
-  def flatMap[B](transformer: MyTransformer[A,MyList[B]]): MyList[B]
-  def filter(predicate: MyPredicate[A]): MyList[A]
+  def map[B](transformer: A => B): MyList[B]
+  def flatMap[B](transformer: A => MyList[B]): MyList[B]
+  def filter(predicate: A => Boolean): MyList[A]
   def ++[B >: A](list: MyList[B]): MyList[B]
 }
 
@@ -19,9 +19,9 @@ object EmptyList extends MyList[Nothing] {
   override def isEmpty: Boolean = true
   override def add[B >: Nothing](elem: B): MyList[B] = new MyListImpl(elem, EmptyList)
   override def printElements: String = ""
-  override def map[B](transformer: MyTransformer[Nothing, B]): MyList[B] = EmptyList
-  override def flatMap[B](transformer: MyTransformer[Nothing, MyList[B]]): MyList[B] = EmptyList
-  override def filter(predicate: MyPredicate[Nothing]): MyList[Nothing] = EmptyList
+  override def map[B](transformer: Nothing => B): MyList[B] = EmptyList
+  override def flatMap[B](transformer: Nothing => MyList[B]): MyList[B] = EmptyList
+  override def filter(predicate: Nothing => Boolean): MyList[Nothing] = EmptyList
   override def ++[B >: Nothing](list: MyList[B]): MyList[B] = list
 }
 
@@ -36,25 +36,17 @@ class MyListImpl[+A](h: A, t: MyList[A]) extends MyList[A] {
     if (t.isEmpty) h.toString
     else h + ", " + t.printElements
 
-  override def map[B](transformer: MyTransformer[A, B]): MyList[B] =
-    new MyListImpl(transformer.transform(h), t.map(transformer))
+  override def map[B](transformer: A => B): MyList[B] =
+    new MyListImpl(transformer(h), t.map(transformer))
 
-  override def flatMap[B](transformer: MyTransformer[A, MyList[B]]): MyList[B] =
-    transformer.transform(h) ++ t.flatMap(transformer)
+  override def flatMap[B](transformer: A => MyList[B]): MyList[B] =
+    transformer(h) ++ t.flatMap(transformer)
 
-  override def filter(predicate: MyPredicate[A]): MyList[A] =
-    if (predicate.test(h)) new MyListImpl(h, t.filter(predicate))
+  override def filter(predicate: A => Boolean): MyList[A] =
+    if (predicate(h)) new MyListImpl(h, t.filter(predicate))
     else t.filter(predicate)
 
   override def ++[B >: A](list: MyList[B]): MyList[B] = new MyListImpl[B](h, t ++ list)
-}
-
-trait MyPredicate[-T] {
-  def test(elem: T): Boolean
-}
-
-trait MyTransformer[-A, B] {
-  def transform(elem: A): B
 }
 
 object MyListTest extends App {
@@ -88,17 +80,16 @@ object MyListTest extends App {
   val listInt8: MyList[Int] = new MyListImpl[Int](4, new MyListImpl[Int](5, EmptyList))
 
   println(listInt7 ++ listInt8)
-  val flatMappedList9 = listInt7.flatMap(new MyTransformer[Int, MyList[Int]] {
-    override def transform(elem: Int): MyList[Int] = new MyListImpl[Int](elem, new MyListImpl[Int](elem + 2, EmptyList))
-  })
+  val flatMappedList9 = listInt7.flatMap(elem => (new MyListImpl[Int](elem, new MyListImpl[Int](elem + 2, EmptyList))))
 
-  val flatMappedList10 = listInt7.flatMap(new MyTransformer[Int, MyList[Int]] {
-    override def transform(elem: Int): MyList[Int] = new MyListImpl[Int](elem, new MyListImpl[Int](elem * 2, EmptyList))
-  })
+  val flatMappedList10 = listInt7.flatMap(elem => (new MyListImpl[Int](elem, new MyListImpl[Int](elem + 2, EmptyList))))
 
   println(flatMappedList9)
-  println(listInt7.flatMap(elem => new MyListImpl[Int](elem, new MyListImpl[Int](elem + 2, EmptyList))))
+  val flatMappedList11 = listInt7.flatMap(
+    elem => (new MyListImpl[Int](elem, new MyListImpl[Int](elem * 2, EmptyList)))
+  )
 
   println(flatMappedList10)
+  println(flatMappedList11)
 
 }
