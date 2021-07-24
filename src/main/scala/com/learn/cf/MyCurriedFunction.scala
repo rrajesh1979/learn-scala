@@ -13,4 +13,12 @@ object MyCurriedFunction extends App {
 
   val superAdderF = (x: Int) => (y: Int) => x + y
 
+
+  def curriedFormatter(f: String)(x: Double): String = f.format(x)
+
+  val standardFormatter: (Double => String) = curriedFormatter("%4.2f")
+  val preciseFormatter: (Double => String) = curriedFormatter("%18.5f")
+
+  println(standardFormatter(Math.PI))
+  println(preciseFormatter(Math.PI))
 }
