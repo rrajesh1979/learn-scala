@@ -7,10 +7,17 @@ abstract class MyList[+A] {
   def add[B >: A](elem: B): MyList[B]
   def printElements: String
   override def toString: String = "[" + printElements + "]"
+
+  //anonymous functions
   def map[B](transformer: A => B): MyList[B]
   def flatMap[B](transformer: A => MyList[B]): MyList[B]
   def filter(predicate: A => Boolean): MyList[A]
+
+  //operators
   def ++[B >: A](list: MyList[B]): MyList[B]
+
+  //HOFs
+  def forEach(f: A => Unit): Unit
 }
 
 object EmptyList extends MyList[Nothing] {
@@ -23,6 +30,8 @@ object EmptyList extends MyList[Nothing] {
   override def flatMap[B](transformer: Nothing => MyList[B]): MyList[B] = EmptyList
   override def filter(predicate: Nothing => Boolean): MyList[Nothing] = EmptyList
   override def ++[B >: Nothing](list: MyList[B]): MyList[B] = list
+
+  override def forEach(f: Nothing => Unit): Unit = ()
 }
 
 class MyListImpl[+A](h: A, t: MyList[A]) extends MyList[A] {
@@ -47,6 +56,11 @@ class MyListImpl[+A](h: A, t: MyList[A]) extends MyList[A] {
     else t.filter(predicate)
 
   override def ++[B >: A](list: MyList[B]): MyList[B] = new MyListImpl[B](h, t ++ list)
+
+  override def forEach(f: A => Unit): Unit ={
+    f(h)
+    t.forEach(f)
+  }
 }
 
 object MyListTest extends App {
@@ -58,38 +72,7 @@ object MyListTest extends App {
   val listInt3: MyList[Int] = new MyListImpl[Int](10, new MyListImpl[Int](20, new MyListImpl[Int](30, EmptyList)))
   val listInt4 = listInt3.add(40)
 
-  println(listInt1)
-  println(listInt2)
-  println(listInt3)
-  println(listInt4)
-
-  val listInt5 = listInt4.add("50")
-  println(listInt5)
-
-  val transformedList3 = listInt3.map(elem => elem * 2)
-  println(transformedList3)
-  println(listInt3.map(_ * 2))
-
-  val listInt6: MyList[Int] = new MyListImpl[Int](1, new MyListImpl[Int](2, new MyListImpl[Int](3, new MyListImpl[Int](4, new MyListImpl[Int](5, new MyListImpl[Int](6, EmptyList))))))
-  println(listInt6)
-  val filteredList6 = listInt6.filter(elem => elem % 2 == 0)
-  println(filteredList6)
-  println(listInt6.filter(_ % 2 == 0))
-
-  val listInt7: MyList[Int] = new MyListImpl[Int](1, new MyListImpl[Int](2, new MyListImpl[Int](3, EmptyList)))
-  val listInt8: MyList[Int] = new MyListImpl[Int](4, new MyListImpl[Int](5, EmptyList))
-
-  println(listInt7 ++ listInt8)
-  val flatMappedList9 = listInt7.flatMap(elem => (new MyListImpl[Int](elem, new MyListImpl[Int](elem + 2, EmptyList))))
-
-  val flatMappedList10 = listInt7.flatMap(elem => (new MyListImpl[Int](elem, new MyListImpl[Int](elem + 2, EmptyList))))
-
-  println(flatMappedList9)
-  val flatMappedList11 = listInt7.flatMap(
-    elem => (new MyListImpl[Int](elem, new MyListImpl[Int](elem * 2, EmptyList)))
-  )
-
-  println(flatMappedList10)
-  println(flatMappedList11)
+  listInt3.forEach(x => println(x))
+  listInt4.forEach(print)
 
 }
